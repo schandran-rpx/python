@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            margin-top: 50px;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSRjksIsgZYw8WJbCQsuFfKkCVnEUsrjvdOhVUn6yfnQ&s');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        h1 {
+            color: #222;
+            margin-bottom: 20px;
+        }
+        #game-area {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .choice {
+            margin: 0 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .choice:hover {
+            transform: scale(1.1);
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #444;
+        }
+        #score {
+            margin-top: 40px;
+            font-size: 24px;
+            display: flex;
+            justify-content: center;
+        }
+        #player-score, #computer-score {
+            margin: 0 20px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        #player-score {
+            background-color: #2196F3;
+        }
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+        .blink {
+            animation: blink 1s infinite;
+        }
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black with opacity */
+        }
+        
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        }
+        
+        /* Close button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rock Paper Scissors Game</h1>
+    <div id="game-area">
+        <img class="choice" src="https://cdn-icons-png.flaticon.com/512/3562/3562096.png" alt="Rock" width="100" onclick="playGame('rock')">
+        <img class="choice" src="https://cdn-icons-png.flaticon.com/512/3562/3562322.png" alt="Paper" width="100" onclick="playGame('paper')">
+        <img class="choice" src="https://cdn-icons-png.flaticon.com/128/3562/3562364.png" alt="Scissors" width="100" onclick="playGame('scissors')">
+    </div>
+    <div id="result"></div>
+    <div id="score">
+        <div id="player-score">Player: 0</div>
+        <div id="computer-score">Computer: 0</div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-text"></p>
+            <button onclick="restartGame()">Restart</button>
+        </div>
+    </div>
+
+    <script>
+        let playerScore = 0;
+        let computerScore = 0;
+        const winningPoint = 5; // Set the winning point threshold
+
+        function playGame(playerChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+            // Display player and computer choices
+            document.getElementById('result').innerHTML = `
+                <p>Your choice: <strong>${playerChoice}</strong></p>
+                <p>Computer's choice: <strong>${computerChoice}</strong></p>
+            `;
+
+            // Determine the winner
+            if (playerChoice === computerChoice) {
+                document.getElementById('result').innerHTML += "<p class='blink'>It's a tie!</p>";
+            } else if ((playerChoice === 'rock' && computerChoice === 'scissors') ||
+                       (playerChoice === 'paper' && computerChoice === 'rock') ||
+                       (playerChoice === 'scissors' && computerChoice === 'paper')) {
+                document.getElementById('result').innerHTML += "<p>You win!</p>";
+                playerScore++;
+            } else {
+                document.getElementById('result').innerHTML += "<p>You lose!</p>";
+                computerScore++;
+            }
+
+            // Update scores
+            document.getElementById('player-score').innerHTML = `Player: ${playerScore}`;
+            document.getElementById('computer-score').innerHTML = `Computer: ${computerScore}`;
+
+            // Check if someone has reached the winning point
+            if (playerScore === winningPoint || computerScore === winningPoint) {
+                let modalText = "";
+                if (playerScore === winningPoint) {
+                    modalText = "Congratulations! You win the game!";
+                } else {
+                    modalText = "Sorry! Computer wins the game!";
+                }
+                document.getElementById('modal-text').innerText = modalText;
+                document.getElementById('myModal').style.display = "block";
+                disableChoices();
+            }
+        }
+
+        function disableChoices() {
+            // Disable all choice buttons
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach(choice => choice.style.pointerEvents = 'none');
+        }
+
+        function restartGame() {
+            playerScore = 0;
+            computerScore = 0;
+            document.getElementById('player-score').innerText = `Player: ${playerScore}`;
+            document.getElementById('computer-score').innerText = `Computer: ${computerScore}`;
+            document.getElementById('myModal').style.display = "none";
+            enableChoices();
+        }
+
+        function enableChoices() {
+            // Enable all choice buttons
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach(choice => choice.style.pointerEvents = 'auto');
+        }
+
+        // Close the modal when the user clicks on the close button or outside the modal
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal') || event.target.classList.contains('close')) {
+                document.getElementById('myModal').style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
