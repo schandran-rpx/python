@@ -20,6 +20,18 @@
             color: #222;
             margin-bottom: 20px;
         }
+        button {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #6dbbdf;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            margin-top: 50px;
+            padding: 10px 20px;
+            width: 10%; /* Full width */
+            height: 10%; /* Full height */
+            border-radius: 20px;
+            border: #f0f0f0;
+        }
         #game-area {
             display: flex;
             justify-content: center;
@@ -62,6 +74,7 @@
         }
         .blink {
             animation: blink 1s infinite;
+            color: rgb(255, 0, 251);
         }
         /* Modal styles */
         .modal {
@@ -81,7 +94,7 @@
             background-color: #fefefe;
             margin: 15% auto; /* 15% from the top and centered */
             padding: 20px;
-            border: 1px solid #888;
+            border: 1px solid #995e5e;
             width: 80%; /* Could be more or less, depending on screen size */
             border-radius: 10px;
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
@@ -115,6 +128,7 @@
         <div id="player-score">Player: 0</div>
         <div id="computer-score">Computer: 0</div>
     </div>
+    <button onclick="restartGame()">Restart</button>
 
     <!-- Modal -->
     <div id="myModal" class="modal">
@@ -146,10 +160,10 @@
             } else if ((playerChoice === 'rock' && computerChoice === 'scissors') ||
                        (playerChoice === 'paper' && computerChoice === 'rock') ||
                        (playerChoice === 'scissors' && computerChoice === 'paper')) {
-                document.getElementById('result').innerHTML += "<p>You win!</p>";
+                document.getElementById('result').innerHTML += "<p class='blink'>You win!</p>";
                 playerScore++;
             } else {
-                document.getElementById('result').innerHTML += "<p>You lose!</p>";
+                document.getElementById('result').innerHTML += "<p class='blink'>You lose!</p>";
                 computerScore++;
             }
 
@@ -162,12 +176,14 @@
                 let modalText = "";
                 if (playerScore === winningPoint) {
                     modalText = "Congratulations! You win the game!";
+                    restartGame();
                 } else {
                     modalText = "Sorry! Computer wins the game!";
+                    restartGame();
                 }
                 document.getElementById('modal-text').innerText = modalText;
                 document.getElementById('myModal').style.display = "block";
-                disableChoices();
+                // disableChoices();
             }
         }
 
@@ -183,6 +199,7 @@
             document.getElementById('player-score').innerText = `Player: ${playerScore}`;
             document.getElementById('computer-score').innerText = `Computer: ${computerScore}`;
             document.getElementById('myModal').style.display = "none";
+            document.getElementById('result').innerHTML = null;
             enableChoices();
         }
 

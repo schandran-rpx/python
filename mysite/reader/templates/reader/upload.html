@@ -1,0 +1,7 @@
+<!-- reader/templates/reader/upload.html -->
+<h2>Upload KTR File</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload</button>
+</form>

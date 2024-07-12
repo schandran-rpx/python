@@ -20,5 +20,6 @@ from django.urls import include, path
 urlpatterns = [
     path("polls/", include("polls.urls")),
     path('small_game/', include('small_game.urls')),
+    path('reader/', include('reader.urls', namespace='ktr_reader')),
     path("admin/", admin.site.urls),
 ]

@@ -1,0 +1,60 @@
+<!-- reader/templates/reader/show_file.html -->
+<style>
+    .step, .hop {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .step-details, .hop-details {
+        margin-left: 20px;
+        font-size: 14px;
+    }
+
+    h3 {
+        margin-top: 20px;
+    }
+
+    strong {
+        color: #333;
+    }
+</style>
+
+<h2>KTR File Content</h2>
+
+<h3>Steps</h3>
+<div>
+    {% for step in steps %}
+        <div class="step">
+            <strong>{{ step.name }}</strong> ({{ step.type }})
+            <p>{{ step.description }}</p>
+            <div class="step-details">
+                <h4>Attributes:</h4>
+                <ul>
+                    {% for key, value in step.attributes.items %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% endfor %}
+                </ul>
+                <h4>Settings:</h4>
+                <ul>
+                    {% for key, value in step.settings.items %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<h3>Hops</h3>
+<div>
+    {% for hop in hops %}
+        <div class="hop">
+            From <strong>{{ hop.from }}</strong> to <strong>{{ hop.to }}</strong> (Enabled: {{ hop.enabled }})
+        </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'ktr_reader:upload_file' %}">Upload another file</a>

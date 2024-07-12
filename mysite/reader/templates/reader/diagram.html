@@ -1,0 +1,91 @@
+<!-- reader/templates/reader/diagram.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTR Diagram</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.4.2/joint.min.css">
+    <style>
+        #paper {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="paper"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.0/backbone-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/3.4.2/joint.min.js"></script>
+    <script>
+        (function() {
+            const pk = {{ pk }};
+            const paper = new joint.dia.Paper({
+                el: document.getElementById('paper'),
+                width: '100%',
+                height: '100%',
+                gridSize: 10,
+                drawGrid: true,
+                model: new joint.dia.Graph()
+            });
+
+            $.getJSON(`/reader/show/${pk}/`, function(data) {
+                console.log('Data fetched:', data); // Debugging: Check if data is fetched
+
+                const graph = paper.model;
+                const elements = [];
+                const links = [];
+
+                data.steps.forEach((step, index) => {
+                    console.log('Step:', step); // Debugging: Check each step data
+
+                    const rect = new joint.shapes.standard.Rectangle();
+                    rect.position(100, 30 + 100 * index);
+                    rect.resize(100, 40);
+                    rect.attr({
+                        body: {
+                            fill: 'blue'
+                        },
+                        label: {
+                            text: step.name,
+                            fill: 'white'
+                        }
+                    });
+                    elements.push(rect);
+                    graph.addCell(rect);
+
+                    console.log('Element added:', rect); // Debugging: Check element added
+                });
+
+                data.hops.forEach(hop => {
+                    console.log('Hop:', hop); // Debugging: Check each hop data
+
+                    const source = elements.find(el => el.attr('label/text') === hop.from);
+                    const target = elements.find(el => el.attr('label/text') === hop.to);
+                    if (source && target) {
+                        const link = new joint.shapes.standard.Link();
+                        link.source(source);
+                        link.target(target);
+                        link.attr({
+                            line: {
+                                stroke: hop.enabled === 'Y' ? 'green' : 'red'
+                            }
+                        });
+                        links.push(link);
+                        graph.addCell(link);
+
+                        console.log('Link added:', link); // Debugging: Check link added
+                    }
+                });
+            }).fail(function(jqxhr, textStatus, error) {
+                console.error('Error fetching data:', textStatus, error); // Debugging: Check if there's an error fetching data
+            });
+        })();
+    </script>
+</body>
+</html>
